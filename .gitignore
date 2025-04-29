@@ -1,0 +1,66 @@
+# Rust/Cargo specific
+**/target/
+**/Cargo.lock
+
+# Editor directories and files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.vs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Virtual Environment
+venv/
+env/
+.env/
+.venv/
+
+# IDE and Editor Settings Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Output and Media Files
+*.mp4
+*.avi
+*.mov
+*.jpg
+*.png
+*.jpeg
+*.gif
+data/
+frame_output/
+hls_output/
+
+# Output and Result Files
+result/
+results_*/
+results/
+output/
+outputs/
+assets/
+script/
+scripts/
+output_*
+
+# Installation
+build/
+
+# Config for personal use
+config/

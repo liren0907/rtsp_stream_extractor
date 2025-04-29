@@ -1,0 +1,14 @@
+{
+    "rtsp_url": "rtsp://localhost:8554/stream",
+    "rtsp_url_list": [
+        "rtsp://localhost:8554/stream",
+        "rtsp://localhost:8554/stream2"
+    ],
+    "output_directory": "media",
+    "show_preview": false,
+    "saving_option": "list",
+    "saved_time_duration": 630,
+    "audio": false,
+    "use_fps": false,
+    "fps": 30.0
+}
