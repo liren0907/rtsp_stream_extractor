@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  rtsp-extractor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rtsp_stream_extractor
+    restart: always
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./media:/app/media
+    environment:
+      - TZ=Asia/Taipei 

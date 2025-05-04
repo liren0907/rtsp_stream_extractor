@@ -1,0 +1,15 @@
+# Ignore git directory
+.git
+
+# Ignore build artifacts (local and potentially nested)
+target/
+**/target/
+
+# Ignore macOS specific files
+.DS_Store
+
+# Ignore log files if any are generated locally
+*.log
+
+# Ignore local media output - should be mounted via volume
+media/ 

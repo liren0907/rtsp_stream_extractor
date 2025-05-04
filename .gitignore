@@ -47,6 +47,7 @@ env/
 data/
 frame_output/
 hls_output/
+media/
 
 # Output and Result Files
 result/

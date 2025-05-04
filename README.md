@@ -26,7 +26,7 @@ A robust Rust application for recording RTSP camera streams with support for mul
 1. Clone this repository:
    ```bash
    git clone [repository-url]
-   cd rtsp-stream
+   cd rtsp_stream_extractor
    ```
 
 2. Build the project:
@@ -70,8 +70,100 @@ The application uses `config.json` for configuration:
 1. Configure your settings in `config.json`
 2. Run the application:
    ```bash
+   # Build and run directly
    cargo run --release
    ```
+   Alternatively, if you have already built the project with `cargo build --release`,
+   you can run the executable directly:
+   ```bash
+   ./target/release/rtsp_stream_extractor
+   ```
+
+## Docker deployment
+
+This application can be easily deployed using Docker and Docker Compose.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) installed on your system.
+- [Docker Compose](https://docs.docker.com/compose/install/) (usually included with Docker Desktop).
+
+### Configuration
+
+1.  **Create `config.json`:** Before building or running, create a `config.json` file in the root directory of the project. Configure your RTSP URLs, output directory (use `/app/media` inside the container), and other settings as described in the [Configuration](#configuration) section.
+
+    *Example `config.json` for Docker:* 
+    ```json
+    {
+        "rtsp_url": "rtsp://your_camera_stream_url",
+        "rtsp_url_list": [
+            "rtsp://camera1_url",
+            "rtsp://camera2_url"
+        ],
+        "output_directory": "/app/media", 
+        "show_preview": false,
+        "saving_option": "list",
+        "saved_time_duration": 600, 
+        "use_fps": false,
+        "fps": 30.0
+    }
+    ```
+    *Note: `show_preview` should generally be `false` in a Docker deployment.* 
+
+2.  **(Optional) Create Host Media Directory:** Create a directory on your host machine where you want the recordings to be saved (e.g., `mkdir ./media`). The `docker-compose.yml` file is configured to mount `./media` from the host into the container.
+
+### Building and Running with Docker Compose (Recommended)
+
+1.  **Navigate:** Open a terminal in the project's root directory (where `docker-compose.yml` is located).
+2.  **Build and Run:** Execute the following command:
+    ```bash
+    docker compose up --build -d
+    ```
+    *   `--build`: Ensures the image is built using the `Dockerfile` if it doesn't exist or if the `Dockerfile` changed.
+    *   `-d`: Runs the container in detached mode (in the background).
+
+3.  **View Logs:** To see the application logs, run:
+    ```bash
+    docker compose logs -f
+    ```
+4.  **Stop:** To stop the service, run:
+    ```bash
+    docker compose down
+    ```
+
+### Building and Running with Docker Commands
+
+1.  **Navigate:** Open a terminal in the project's root directory.
+2.  **Build the Image:**
+    ```bash
+    docker build -t rtsp_stream_extractor .
+    ```
+3.  **Run the Container:**
+    ```bash
+    docker run -d --name rtsp-recorder \
+      --restart always \
+      -e TZ=Asia/Taipei \
+      -v "$(pwd)/config.json":/app/config.json:ro \
+      -v "$(pwd)/media":/app/media \
+      rtsp_stream_extractor
+    ```
+    *   `-d`: Detached mode.
+    *   `--name rtsp-recorder`: Assigns a name.
+    *   `--restart always`: Automatic restart.
+    *   `-e TZ=Asia/Taipei`: Sets the timezone (adjust as needed).
+    *   `-v "$(pwd)/config.json":/app/config.json:ro`: Mounts your local `config.json` (read-only).
+    *   `-v "$(pwd)/media":/app/media`: Mounts your local `media` directory for recordings.
+    *   `rtsp_stream_extractor`: The image name.
+
+4.  **View Logs:**
+    ```bash
+    docker logs -f rtsp-recorder
+    ```
+5.  **Stop and Remove:**
+    ```bash
+    docker stop rtsp-recorder
+    docker rm rtsp-recorder
+    ```
 
 ### Output Structure
 
