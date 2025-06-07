@@ -1,8 +1,8 @@
-# Use the Rust image as the single base image
-FROM rust:1.81.0
+# Use a recent Rust image as the base
+FROM rust:latest
 
 # Install build and runtime dependencies
-# (ffmpeg, opencv dev libraries, clang/llvm for dependencies)
+# (ffmpeg for recording, opencv dev libraries for custom FPS/preview)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     pkg-config \
@@ -18,13 +18,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy application source code
-COPY Cargo.toml Cargo.lock ./
-COPY src ./src
+# Copy the entire project context into the container
+COPY . .
 
-# Build the application in release mode
-RUN cargo build --release
+# Build the entire workspace in release mode
+# The `--workspace` flag is crucial for a workspace project
+RUN cargo build --workspace --release
 
 # Set the command to run the application when the container starts
-# The binary is now in target/release/
 ENTRYPOINT ["./target/release/rtsp_stream_extractor"] 

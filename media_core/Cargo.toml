@@ -1,0 +1,9 @@
+[package]
+name = "media_core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+opencv = "0.93.5"
+serde = { version = "1.0", features = ["derive"] }
+chrono = "0.4"
