@@ -25,5 +25,5 @@ COPY . .
 # The `--workspace` flag is crucial for a workspace project
 RUN cargo build --workspace --release
 
-# Set the command to run the application when the container starts
-ENTRYPOINT ["./target/release/rtsp_stream_extractor"] 
+# Set the command to run the application in RTSP mode when the container starts
+ENTRYPOINT ["./target/release/rtsp_stream_extractor", "rtsp"] 

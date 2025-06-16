@@ -21,6 +21,14 @@ A robust Rust application for recording RTSP camera streams with support for mul
 
 ## How to Run
 
+The application runs in RTSP stream capture mode using the `rtsp` command.
+
+**Usage:**
+```bash
+./target/release/rtsp_stream_extractor rtsp    # Start RTSP stream capture
+./target/release/rtsp_stream_extractor help    # Show help information
+```
+
 ### 1. Configure the Application
 
 Create a `config.json` file in the project root directory.
@@ -67,11 +75,11 @@ Create a `config.json` file in the project root directory.
 3.  **Run the application:**
     ```bash
     # Run the specific binary package from the workspace root
-    cargo run -p rtsp_stream_extractor --release
+    cargo run -p rtsp_stream_extractor --release rtsp
     ```
     Alternatively, run the compiled binary directly:
     ```bash
-    ./target/release/rtsp_stream_extractor
+    ./target/release/rtsp_stream_extractor rtsp
     ```
 
 ## Docker Deployment
