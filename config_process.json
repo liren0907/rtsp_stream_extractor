@@ -1,0 +1,15 @@
+{
+    "input_directories": [
+        "data/data_001",
+        "data/data_002"
+    ],
+    "output_directory": "output",
+    "output_prefix": "summary",
+    "num_threads": 1,
+    "output_fps": 30,
+    "frame_interval": 30,
+    "extraction_mode": "opencv",
+    "create_summary_per_thread": true,
+    "video_creation_mode": "direct",
+    "processing_mode": "sequential"
+}

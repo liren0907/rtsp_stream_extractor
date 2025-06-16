@@ -1,11 +1,61 @@
 use media_core::{CaptureConfig, RTSPCapture, SavingOption};
+use media_core::process::{create_video_processor, ProcessingMode, create_processor_with_mode};
 use serde_json;
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 use std::thread;
+use std::env;
 
 fn main() -> Result<(), Box<dyn Error>> {
+    let args: Vec<String> = env::args().collect();
+    
+    if args.len() < 2 {
+        print_usage();
+        return Ok(());
+    }
+
+    match args[1].as_str() {
+        "rtsp" => run_rtsp_mode()?,
+        "process" => {
+            if args.len() < 3 {
+                println!("Error: Process mode requires a config file path");
+                println!("Usage: cargo run process <config_file_path>");
+                return Ok(());
+            }
+            run_process_mode(&args[2])?;
+        },
+        "help" | "--help" | "-h" => print_usage(),
+        _ => {
+            println!("Error: Unknown mode '{}'", args[1]);
+            print_usage();
+        }
+    }
+
+    Ok(())
+}
+
+fn print_usage() {
+    println!("Media Core - RTSP Stream Extractor");
+    println!();
+    println!("USAGE:");
+    println!("    cargo run <MODE> [OPTIONS]");
+    println!();
+    println!("MODES:");
+    println!("    rtsp                    Run RTSP stream capture mode");
+    println!("    process <config_file>   Run video processing mode");
+    println!("    help                    Show this help message");
+    println!();
+    println!("EXAMPLES:");
+    println!("    cargo run rtsp                           # Capture RTSP streams using config.json");
+    println!("    cargo run process video_config.json     # Process videos using video config");
+    println!("    cargo run help                           # Show help");
+}
+
+/// Run RTSP stream capture mode (original functionality)
+fn run_rtsp_mode() -> Result<(), Box<dyn Error>> {
+    println!("🎥 Starting RTSP Stream Capture Mode...");
+    
     // Load configuration from file
     let config_file = File::open("config.json")?;
     let reader = BufReader::new(config_file);
@@ -22,6 +72,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             (urls, false)
         }
     };
+
+    println!("📡 Processing {} RTSP stream(s)...", urls_to_process.len());
 
     for url in urls_to_process {
         let output_dir = config.output_directory.clone();
@@ -46,13 +98,13 @@ fn main() -> Result<(), Box<dyn Error>> {
                 fps,
             ) {
                 Ok(mut capture) => {
-                    println!("Processing stream: {}", url);
+                    println!("📹 Processing stream: {}", url);
                     if let Err(e) = capture.process_stream() {
-                        eprintln!("Error processing stream {}: {:?}", url, e);
+                        eprintln!("❌ Error processing stream {}: {:?}", url, e);
                     }
                 }
                 Err(e) => {
-                    eprintln!("Failed to create RTSP capture for {}: {:?}", url, e);
+                    eprintln!("❌ Failed to create RTSP capture for {}: {:?}", url, e);
                 }
             }
         });
@@ -64,5 +116,43 @@ fn main() -> Result<(), Box<dyn Error>> {
         handle.join().unwrap();
     }
 
+    println!("✅ RTSP stream capture completed!");
+    Ok(())
+}
+
+/// Run video processing mode (new Process module functionality)
+fn run_process_mode(config_path: &str) -> Result<(), Box<dyn Error>> {
+    println!("🎬 Starting Video Processing Mode...");
+    println!("📄 Using config file: {}", config_path);
+    
+    // Create a video processor
+    let mut processor = create_video_processor()?;
+    
+    // Run video extraction with the provided config
+    match processor.run_video_extraction(config_path) {
+        Ok(_) => {
+            println!("✅ Video processing completed successfully!");
+            
+            // Print processing statistics
+            let stats = processor.get_stats();
+            println!("📊 Processing Statistics:");
+            println!("   • Files processed: {}", stats.files_processed);
+            println!("   • Files failed: {}", stats.files_failed);
+            println!("   • Success rate: {:.2}%", stats.success_rate());
+            println!("   • Processing time: {:?}", stats.processing_time);
+            
+            if !stats.errors.is_empty() {
+                println!("⚠️  Errors encountered:");
+                for error in &stats.errors {
+                    println!("   • {}", error);
+                }
+            }
+        },
+        Err(e) => {
+            eprintln!("❌ Video processing failed: {}", e);
+            return Err(Box::new(e));
+        }
+    }
+    
     Ok(())
 }
