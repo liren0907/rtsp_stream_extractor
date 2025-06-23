@@ -1,6 +1,5 @@
 use std::fmt;
 use std::error::Error;
-use serde::{Deserialize, Serialize};
 
 /// Process module error types
 #[derive(Debug)]

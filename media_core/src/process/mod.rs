@@ -11,6 +11,7 @@ pub mod stats;
 pub mod processor;
 pub mod video;
 pub mod factories;
+pub mod hw_accel;
 
 #[cfg(test)]
 mod tests;
@@ -28,3 +29,4 @@ pub use factories::{
     create_processor, create_processor_with_options, 
     create_processor_with_mode, create_video_processor
 }; 
+pub use hw_accel::{HardwareAccelConfig, HardwareAcceleratedCapture}; 

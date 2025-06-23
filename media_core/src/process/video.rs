@@ -12,7 +12,7 @@ use opencv::{
     core::{Size, Mat, Vector},
     imgcodecs,
     prelude::*,
-    videoio::{self, VideoCapture, VideoCaptureAPIs::CAP_ANY},
+    videoio,
 };
 use path_clean::PathClean;
 use rayon::prelude::*;
@@ -20,6 +20,7 @@ use rayon::prelude::*;
 use crate::process::types::ProcessError;
 use crate::process::config::VideoExtractionConfig;
 use crate::process::stats::ProcessingStats;
+use super::hw_accel::HardwareAcceleratedCapture;
 
 /// Video processing functionality
 pub struct VideoProcessor;
@@ -209,11 +210,14 @@ impl VideoProcessor {
                 video_path.display()
             );
 
-            let mut cap = match VideoCapture::from_file(video_path.to_str().unwrap(), CAP_ANY.into()) {
+            let mut cap = match HardwareAcceleratedCapture::create_capture(
+                video_path.to_str().unwrap(),
+                &config.hardware_acceleration
+            ) {
                 Ok(cap) => cap,
                 Err(e) => {
                     eprintln!(
-                        "Warning: OpenCV failed to create capture for video {}, skipping: {}",
+                        "Warning: Failed to create capture for video {}, skipping: {}",
                         video_path.display(),
                         e
                     );
@@ -421,6 +425,7 @@ impl VideoProcessor {
                     video_index,
                     temp_path.to_str().unwrap(),
                     config.frame_interval,
+                    &config.hardware_acceleration,
                 )?;
             }
         }
@@ -435,11 +440,12 @@ impl VideoProcessor {
         video_index: usize,
         temp_frame_dir: &str,
         frame_interval: usize,
+        hw_config: &super::hw_accel::HardwareAccelConfig,
     ) -> Result<(), ProcessError> {
         fs::create_dir_all(temp_frame_dir)
             .map_err(|e| ProcessError::IoError(format!("Failed to create temp frame directory: {}", e)))?;
 
-        let mut cap = VideoCapture::from_file(video_filename, CAP_ANY.into())
+        let mut cap = HardwareAcceleratedCapture::create_capture(video_filename, hw_config)
             .map_err(|e| ProcessError::ProcessingFailed(format!("Failed to open video {}: {}", video_filename, e)))?;
 
         if !cap.is_opened()

@@ -1,11 +1,11 @@
 //! Core processor functionality for file processing operations
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::fs;
 use std::time::Duration;
 
 use crate::process::types::{ProcessError, ProcessingMode, FileFormat, VideoFormat, AudioFormat, ImageFormat, DocumentFormat};
-use crate::process::config::{ProcessConfig, ProcessingOptions};
+use crate::process::config::ProcessConfig;
 use crate::process::stats::ProcessingStats;
 use crate::process::video::VideoProcessor;
 

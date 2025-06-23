@@ -15,3 +15,14 @@ serde = "1.0.214"
 serde_json = "1.0.132"
 m3u8-rs = "5.0.4"
 tempfile = "3.8.0"
+
+# 🚀 PERFORMANCE OPTIMIZATION PROFILES
+# Maximum optimization for production builds
+[profile.release]
+opt-level = 3
+debug = false
+strip = true
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+overflow-checks = false

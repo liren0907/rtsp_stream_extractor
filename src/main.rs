@@ -1,5 +1,5 @@
 use media_core::{CaptureConfig, RTSPCapture, SavingOption};
-use media_core::process::{create_video_processor, ProcessingMode, create_processor_with_mode};
+use media_core::process::create_video_processor;
 use serde_json;
 use std::error::Error;
 use std::fs::File;

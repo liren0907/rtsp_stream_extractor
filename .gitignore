@@ -65,3 +65,7 @@ build/
 
 # Config for personal use
 config/
+
+# Docs (ignore)
+docs/optimized_compilation
+docs/media_core

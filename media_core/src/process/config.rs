@@ -1,6 +1,6 @@
-use std::time::Duration;
 use serde::{Deserialize, Serialize};
 use crate::process::types::{ProcessingMode, FileFormat};
+use super::hw_accel::HardwareAccelConfig;
 
 /// Video extraction configuration matching extraction/config.rs
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -15,6 +15,10 @@ pub struct VideoExtractionConfig {
     pub create_summary_per_thread: Option<bool>,
     pub video_creation_mode: Option<String>,
     pub processing_mode: Option<String>,
+    
+    /// Hardware acceleration configuration
+    #[serde(default)]
+    pub hardware_acceleration: HardwareAccelConfig,
 }
 
 /// Basic process configuration
